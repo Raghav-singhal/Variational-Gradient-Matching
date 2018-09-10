@@ -9,8 +9,7 @@ import seaborn as sns
 sns.set()
 
 from Kernels.rbf import RBF  ## optimize kernel params
-# from lotkavolterra import LotkaVolterra
-# from vd_misspecified import ViralDynamics
+from lotkavolterra import LotkaVolterra
 
 
 class SVI:
