@@ -12,15 +12,11 @@ def lotka_Experiment(args):
     time_loc = 't_lotkavolterra.txt'
     nParams = 4
 
-    ###### optimizae kernel hyperparameters
-    ###### use an empirical bayes approach
-    ###### log-likelihood maximization
-
     nStates = 2
 
-    kernel_params = [[0.25, 0.1] for i in range(nStates)] # 1 rbf param for each x_i
-    sigma = [(0.1) for i in range(nStates)]             # observation noise
-    gamma = [(0.02) for i in range(nStates)]            # gradient noise
+    kernel_params = [[0.25, 0.1] for i in range(nStates)]
+    sigma = [(0.1) for i in range(nStates)]
+    gamma = [(0.02) for i in range(nStates)]
 
     lv_Exp = LotkaVolterra()
 
@@ -35,8 +31,6 @@ def lotka_Experiment(args):
               get_BX=lv_Exp.get_BX, F=lv_Exp.f,
               gamma=gamma)
 
-    rnd = np.random.RandomState()
-
     Y, time = exp.Y, exp.time
 
     mean, cov, X_mean, X_cov = exp.coordinate_ascent(epochs=epochs,
@@ -50,13 +44,13 @@ def lotka_Experiment(args):
     X_samples = exp.sample_X(X_mean, X_cov, nSamples=1)
     X_samples_2 = exp.sample_X(X_mean_2, X_cov_2, nXSamples)
 
-    theta_samples = [mean]
-    # theta_samples = rnd.multivariate_normal(mean, cov,
-                                            # args.nThetaSamples)
+    # theta_samples = [mean]
+    theta_samples = rnd.multivariate_normal(mean, cov,
+                                            args.nThetaSamples)
 
-    theta_samples_2 = [mean2]
-    # theta_samples_2 = rnd.multivariate_normal(mean2, cov2,
-                                              # args.nThetaSamples)
+    # theta_samples_2 = [mean2]
+    theta_samples_2 = rnd.multivariate_normal(mean2, cov2,
+                                              args.nThetaSamples)
 
     T = 10
     path = []
