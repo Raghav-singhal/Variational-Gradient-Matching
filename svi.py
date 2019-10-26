@@ -1,15 +1,10 @@
-import os
 from tqdm import tqdm
-import argparse
 
 import numpy as np
-from scipy.stats import multivariate_normal
-import matplotlib.pyplot as plt
 import seaborn as sns
-sns.set()
 
-from Kernels.rbf import RBF  ## optimize kernel params
-from lotkavolterra import LotkaVolterra
+from Kernels.rbf import RBF
+sns.set()
 
 
 class SVI:
@@ -33,7 +28,8 @@ class SVI:
 
         # load time observations
         self.time = np.loadtxt(time_loc)
-        self.time_diff = (self.time.reshape(-1, 1) - self.time.reshape(1, -1)).T
+        self.time_diff = (self.time.reshape(-1, 1) - self.time.reshape(1, -1))
+        self.time_diff = self.time_diff.T
 
         # number of unobserved states
         self.nHiddenStates = nHiddenStates
@@ -52,7 +48,7 @@ class SVI:
 
         # get kernel
         self.kernels = [RBF(k_param[0],
-                           k_param[1]) for k_param in kernel_params]
+                            k_param[1]) for k_param in kernel_params]
 
         # load all kernel related matrices
         self.get_kernel_matrices()
@@ -82,7 +78,6 @@ class SVI:
         sigma = self.sigma
         gamma = self.gamma
         Y = self.Y
-
 
         m_noX_matrices = []
         A_matrices = []
@@ -124,7 +119,6 @@ class SVI:
             A_matrices.append(A_k)
             Gamma_matrices.append(Gamma_k)
 
-
         # store them
         self.m_noX_matrices = m_noX_matrices
         self.A_matrices = A_matrices
@@ -135,7 +129,6 @@ class SVI:
 
     def get_rTheta(self, X):
         dim = X.shape[1]        # number of state variables
-        nObs = X.shape[0]       # number of time observations
 
         assert X.shape[1] == self.Y.shape[1]
 
@@ -200,7 +193,8 @@ class SVI:
 
                 inv_Omega_X_u += B_uk.T.dot(Gamma_k.dot(B_uk)) + inv_Sigma_u
 
-                r_X_u += B_uk.T.dot(Gamma_k.dot(m_k - b_uk)) + inv_Sigma_u.dot(mu_u)
+                r_X_u += B_uk.T.dot(Gamma_k.dot(m_k - b_uk))
+                r_X_u += inv_Sigma_u.dot(mu_u)
 
             Omega_X_u = np.linalg.inv(inv_Omega_X_u)
             r_X_u = Omega_X_u.dot(r_X_u)
@@ -288,8 +282,6 @@ class SVI:
         to calculate parameters for mean field
         coordinate ascent
         """
-        nObs = self.nObs        # time points
-        sigma = self.sigma       # observation noise
         nParams = self.nParams
         dim = self.nStates
 
@@ -371,9 +363,6 @@ class SVI:
 
 #     mean, cov, X_mean, X_cov = exp.coordinate_ascent(epochs=epochs,
 #                                                      nSamples=nSamples)
-
-#     # mean2, cov2, X_mean_2, X_cov_2 = exp.coordinate_ascent(epochs=epochs,
-#     #                                                        nSamples=nSamples)
 
 #     # print(vd_Exp.theta, mean, mean2)
 #     # nXSamples = args.nXSamples
@@ -486,3 +475,4 @@ class SVI:
 
 #     # lotka_Experiment(args)
 #     vd_Experiment(args)
+print("owen")
